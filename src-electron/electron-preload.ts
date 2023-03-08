@@ -1,29 +1,53 @@
-/**
- * This file is used specifically for security reasons.
- * Here you can access Nodejs stuff and inject functionality into
- * the renderer thread (accessible there through the "window" object)
- *
- * WARNING!
- * If you import anything from node_modules, then make sure that the package is specified
- * in package.json > dependencies and NOT in devDependencies
- *
- * Example (injects window.myAPI.doAThing() into renderer thread):
- *
- *   import { contextBridge } from 'electron'
- *
- *   contextBridge.exposeInMainWorld('myAPI', {
- *     doAThing: () => {}
- *   })
- *
- * WARNING!
- * If accessing Node functionality (like importing @electron/remote) then in your
- * electron-main.ts you will need to set the following when you instantiate BrowserWindow:
- *
- * mainWindow = new BrowserWindow({
- *   // ...
- *   webPreferences: {
- *     // ...
- *     sandbox: false // <-- to be able to import @electron/remote in preload script
- *   }
- * }
- */
+import { contextBridge, ipcRenderer } from 'electron';
+import { EventType } from './events';
+
+contextBridge.exposeInMainWorld('browser', {
+    setBounds: (x: number, y: number, width: number, height: number) => {
+        return ipcRenderer.invoke(EventType.setBounds, { x, y, width, height });
+    },
+
+    setUrl: (url: string) => {
+        return ipcRenderer.invoke(EventType.setUrl, url);
+    },
+
+    getUrl: () => {
+        return ipcRenderer.invoke(EventType.getUrl);
+    },
+
+    onCanGoBackChange: async (callback: (...args: any[]) => any) => {
+        ipcRenderer.on(EventType.canGoBack, (event, a) => {
+            callback(a);
+        });
+        callback(await ipcRenderer.invoke(EventType.canGoBack));
+    },
+
+    onCanGoForwardChange: async (callback: (...args: any[]) => any) => {
+        ipcRenderer.on(EventType.canGoForward, (event, a) => {
+            callback(a);
+        });
+        callback(await ipcRenderer.invoke(EventType.canGoForward));
+    },
+
+    onUrlChange: async (callback: (...args: any[]) => any) => {
+        ipcRenderer.on(EventType.updateURL, (event, a) => {
+            callback(a);
+        });
+        callback(await ipcRenderer.invoke(EventType.getUrl));
+    },
+
+    goBack: () => {
+        ipcRenderer.invoke(EventType.goBack);
+    },
+
+    goForward: () => {
+        ipcRenderer.invoke(EventType.goForward);
+    },
+
+    refresh: () => {
+        ipcRenderer.invoke(EventType.refresh);
+    },
+
+    home: () => {
+        ipcRenderer.invoke(EventType.home);
+    },
+});

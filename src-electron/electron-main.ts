@@ -1,6 +1,7 @@
 import { app, BrowserWindow, nativeTheme } from 'electron';
 import path from 'path';
 import os from 'os';
+import { ExternalBrowserView } from './ExternalBrowserView';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -19,18 +20,19 @@ function createWindow() {
      */
     mainWindow = new BrowserWindow({
         icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-        width: 1000,
-        height: 600,
+        width: 1500,
+        height: 800,
         useContentSize: true,
         webPreferences: {
+            spellcheck: false,
             contextIsolation: true,
             // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
             preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
         },
     });
 
-    console.log('process.env.APP_URL', process.env.APP_URL);
     mainWindow.loadURL(process.env.APP_URL);
+    new ExternalBrowserView('https://bing.com', mainWindow);
 
     if (process.env.DEBUGGING) {
         // if on DEV or Production with debug enabled
