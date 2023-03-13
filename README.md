@@ -1,41 +1,11 @@
-# webview (electron-webview)
+# 浏览器 (electron-browser)
 
-A Quasar Project
+基于 electron + vue3 实现的 Web 浏览器
 
-## Install the dependencies
+## 环境安装和预览
+
 ```bash
-yarn
+pnpm install
 # or
-npm install
+pnpm dev
 ```
-
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
-
-
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
-
-
-### Format the files
-```bash
-yarn format
-# or
-npm run format
-```
-
-
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
